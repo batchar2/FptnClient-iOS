@@ -1,0 +1,26 @@
+#[settings]
+#os=iOS
+#os.version=12.0
+#os.sdk=iphoneos
+#arch=armv8
+#compiler=apple-clang
+#compiler.version=12.0
+#compiler.libcxx=libc++
+#compiler.cppstd=17
+#build_type=Release
+#
+#[conf]
+#tools.apple:sdk_path=$(xcrun --sdk iphoneos --show-sdk-path)
+#tools.cmake.cmaketoolchain:generator=Xcode
+
+[settings]
+os=iOS
+os.version=12.0
+os.sdk=iphoneos
+arch=armv8
+compiler=apple-clang
+compiler.version=12.0
+compiler.libcxx=libc++
+compiler.cppstd=17
+build_type=Release
+

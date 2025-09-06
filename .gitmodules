@@ -1,0 +1,3 @@
+[submodule "FptnLib/fptn"]
+	path = FptnLib/fptn
+	url = https://github.com/batchar2/fptn.git
