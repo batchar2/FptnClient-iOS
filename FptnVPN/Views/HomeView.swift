@@ -40,9 +40,9 @@ struct HomeView: View {
                     if isConnected {
                         connectionDuration = 0
                         
-                        let client = HttpsClientSwift(host: "example.com", port: 443, sni: "example.com", md5Fingerprint: "...")
-                        let response = client.get(path: "/api/test", timeout: 10)
-                        print(response)
+//                        let client = HttpsClientSwift(host: "example.com", port: 443, sni: "example.com", md5Fingerprint: "...")
+//                        let response = client.get(path: "/api/test", timeout: 10)
+//                        print(response)
                     }
                 }
             }, label: {
