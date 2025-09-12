@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+//import HttpsClientSwift
 
 
 struct HomeView: View {
@@ -38,6 +39,10 @@ struct HomeView: View {
                     isConnected.toggle()
                     if isConnected {
                         connectionDuration = 0
+                        
+                        let client = HttpsClientSwift(host: "example.com", port: 443, sni: "example.com", md5Fingerprint: "...")
+                        let response = client.get(path: "/api/test", timeout: 10)
+                        print(response)
                     }
                 }
             }, label: {

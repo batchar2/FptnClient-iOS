@@ -1,14 +1,32 @@
 # Xcode
-#
-# gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
 
-## User settings
+## Build generated
+FptnVPN/Cpp/fptn_native_lib.framework/
+build/
+DerivedData/
+
+## Various settings
+ExportOptions.plist
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
 xcuserdata/
-.DS_Store
+
+## Other
+*.moved-aside
+*.xccheckout
+*.xcscmblueprint
+
+## We don't want any memgrap's to leak ;)
+**.memgraph
+
 ## Obj-C/Swift specific
 *.hmap
-
-## App packaging
 *.ipa
 *.dSYM.zip
 *.dSYM
@@ -23,12 +41,6 @@ playground.xcworkspace
 # Packages/
 # Package.pins
 # Package.resolved
-# *.xcodeproj
-#
-# Xcode automatically generates this directory with a .xcworkspacedata file and xcuserdata
-# hence it is not needed unless you have added a package configuration file to your project
-# .swiftpm
-
 .build/
 
 # CocoaPods
@@ -47,12 +59,16 @@ playground.xcworkspace
 # Add this line if you want to avoid checking in source code from Carthage dependencies.
 # Carthage/Checkouts
 
-Carthage/Build/
+Carthage/Build
+
+# Accio dependency management
+Dependencies/
+.accio/
 
 # fastlane
 #
-# It is recommended to not store the screenshots in the git repo.
-# Instead, use fastlane to re-generate the screenshots whenever they are needed.
+# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
+# screenshots whenever they are needed.
 # For more information about the recommended setup visit:
 # https://docs.fastlane.tools/best-practices/source-control/#source-control
 
@@ -60,4 +76,11 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+fastlane/*.env
 
+# Code Injection
+#
+# After new code Injection tools there's a generated folder /iOSInjectionProject
+# https://github.com/johnno1962/injectionforxcode
+
+iOSInjectionProject/

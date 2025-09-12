@@ -42,6 +42,7 @@ class FptnLib(ConanFile):
 
     def requirements(self):
         self._register_local_recipe("fptn", "fptn", "0.0.0")
+        self._register_boring_ssl("boringssl", "openssl", "boringssl", True, False)
 
     def layout(self):
         cmake_layout(self)
@@ -122,6 +123,23 @@ class FptnLib(ConanFile):
     def _register_local_recipe(self, recipe, name, version, override=False, force=False):
         script_dir = os.path.dirname(os.path.abspath(__file__))
         recipe_rel_path = os.path.join(script_dir, "fptn")
+        subprocess.run(
+            [
+                "conan",
+                "export",
+                recipe_rel_path,
+                f"--name={name}",
+                f"--version={version}",
+                "--user=local",
+                "--channel=local",
+            ],
+            check=True,
+        )
+        self.requires(f"{name}/{version}@local/local", override=override, force=force)
+    
+    def _register_boring_ssl(self, recipe, name, version, override=False, force=False):
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        recipe_rel_path = os.path.join(script_dir, "fptn", ".conan", "recipes", recipe)
         subprocess.run(
             [
                 "conan",
