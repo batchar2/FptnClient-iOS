@@ -1,9 +1,8 @@
-//
-//  FPTNToken.swift
-//  FptnVPN
-//
-//  Created by Stas Skokov on 13/9/2025.
-//
+/*=============================================================================
+Copyright (c) 2024-2025 Stas Skokov
+
+Distributed under the MIT License (https://opensource.org/licenses/MIT)
+=============================================================================*/
 
 import Foundation
 

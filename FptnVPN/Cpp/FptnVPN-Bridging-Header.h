@@ -1,9 +1,8 @@
-//
-//  FptnVPN-Bridging-Header.h
-//  FptnVPN
-//
-//  Created by Stas Skokov on 11/9/2025.
-//
+/*=============================================================================
+Copyright (c) 2024-2025 Stas Skokov
+
+Distributed under the MIT License (https://opensource.org/licenses/MIT)
+=============================================================================*/
 
 #ifndef FPTN_VPN_BRIDGING_HEADER
 #define FPTN_VPN_BRIDGING_HEADER

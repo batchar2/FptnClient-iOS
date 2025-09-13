@@ -1,10 +1,11 @@
-//
-// HttpsClientBridge.mm
-//
+/*=============================================================================
+Copyright (c) 2024-2025 Stas Skokov
+
+Distributed under the MIT License (https://opensource.org/licenses/MIT)
+=============================================================================*/
 
 #import <Foundation/Foundation.h>
 
-//#import "WrapperHttpsClientBridge.h"
 #import <fptn_native_lib/WrapperHttpsClientBridge.h>
 
 

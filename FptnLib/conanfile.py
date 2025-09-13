@@ -9,7 +9,7 @@ class FptnLib(ConanFile):
     name = "fptn-lib"
     version = "0.0.0"
     requires = (
-        "nlohmann_json/3.12.0", 
+        "nlohmann_json/3.12.0",
         "protobuf/5.29.3",
     )
     settings = (
@@ -45,7 +45,6 @@ class FptnLib(ConanFile):
         tc.variables["FPTN_LIBRARY"] = fptn_dep.cpp_info.libs[0]
         tc.variables["FPTN_LIBRARY_DIR"] = fptn_dep.cpp_info.libdirs[0]
 
-
         protobuf_build = self.dependencies.build["protobuf"]
         protoc_path = os.path.join(protobuf_build.package_folder, "bin", "protoc")
         tc.cache_variables["Protobuf_PROTOC_EXECUTABLE"] = protoc_path
@@ -70,7 +69,9 @@ class FptnLib(ConanFile):
         if self.settings.os == "Windows":
             self.options.rm_safe("fPIC")
 
-    def _register_local_recipe(self, recipe, name, version, override=False, force=False):
+    def _register_local_recipe(
+        self, recipe, name, version, override=False, force=False
+    ):
         script_dir = os.path.dirname(os.path.abspath(__file__))
         recipe_rel_path = os.path.join(script_dir, "fptn")
         subprocess.run(
@@ -86,7 +87,7 @@ class FptnLib(ConanFile):
             check=True,
         )
         self.requires(f"{name}/{version}@local/local", override=override, force=force)
-    
+
     def _register_boring_ssl(self, recipe, name, version, override=False, force=False):
         script_dir = os.path.dirname(os.path.abspath(__file__))
         recipe_rel_path = os.path.join(script_dir, "fptn", ".conan", "recipes", recipe)
