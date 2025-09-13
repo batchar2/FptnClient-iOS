@@ -12,6 +12,9 @@ set(CMAKE_XCODE_ATTRIBUTE_ENABLE_BITCODE NO)
 option(COPY_SOURCE_FILES "Copy source files to output directory" ON)
 set(SOURCE_COPY_DIR "${CMAKE_CURRENT_BINARY_DIR}/exported_sources" CACHE PATH "Directory to copy source files to")
 
+ set(FPTN_IP_ADDRESS_WITHOUT_PCAP ON)
+add_compile_definitions(FPTN_IP_ADDRESS_WITHOUT_PCAP)
+
 
 # Dependencies and compile options
 add_definitions(
@@ -39,8 +42,8 @@ include_directories(fptn/src/fptn-protocol-lib)
 
 # Create library target
 add_library(fptn_native_lib SHARED
-    src/WrapperHttpsClientBridge.cpp 
-    src/WrapperHttpsClientBridge.h
+    src/https/WrapperHttpsClientBridge.cpp src/https/WrapperHttpsClientBridge.h
+    src/websocket/WrapperWebsocketClientBridge.cpp src/websocket/WrapperWebsocketClientBridge.h
 )
 
 # Link required frameworks

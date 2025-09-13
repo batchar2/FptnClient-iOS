@@ -9,6 +9,7 @@
 #define FPTN_VPN_BRIDGING_HEADER
 
 #import <fptn_native_lib/WrapperHttpsClientBridge.h>
+#import <fptn_native_lib/WrapperWebsocketClientBridge.h>
 
 
 #endif // FPTN_VPN_BRIDGING_HEADER

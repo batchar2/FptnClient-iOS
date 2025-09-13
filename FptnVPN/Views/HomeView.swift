@@ -1,78 +1,59 @@
-//
-//  HomeView.swift
-//  FptnVPN
-//
-//  Created by Stanislav on 15/6/2025.
-//
-
-
 import SwiftUI
 
-//import HttpsClientSwift
-
-
 struct HomeView: View {
-    @State private var isConnected = false
-    @State private var selectedMode = "Auto"
-    @State private var connectionDuration = 5
-    @State private var serverName = "USA–NewYork (🇺🇸)"
-    @State private var downloadSpeed = "7,75 Kbps"
-    @State private var uploadSpeed = "20,75 Kbps"
+    @StateObject private var vpnService = VPNService()
+    @State private var showingServerList = false
     
     var body: some View {
         VStack {
             Spacer()
             
-            // Time
-            if isConnected {
-                Text("Время подключения")
+            // Connection time
+            if vpnService.connection.isConnected {
+                Text("Connection Time")
                     .foregroundColor(.white)
-                Text(String(format: "00:00:%02d", connectionDuration))
-                    //.font(.system(size: 20, weight: .bold))
+                Text(vpnService.formatConnectionTime())
                     .foregroundColor(.white)
                     .padding(.bottom, 10)
             }
             
-            // Кнопка включения
+            // Toggle button
             Button(action: {
                 withAnimation {
-                    isConnected.toggle()
-                    if isConnected {
-                        connectionDuration = 0
-                        
-//                        let client = HttpsClientSwift(host: "example.com", port: 443, sni: "example.com", md5Fingerprint: "...")
-//                        let response = client.get(path: "/api/test", timeout: 10)
-//                        print(response)
+                    if vpnService.connection.isConnected {
+                        vpnService.disconnect()
+                    } else {
+                        vpnService.connect()
                     }
                 }
             }, label: {
-                Image(isConnected ? "toggle_button_on" : "toggle_button_off")
+                Image(vpnService.connection.isConnected ? "toggle_button_on" : "toggle_button_off")
                     .resizable()
                     .frame(width: 180, height: 180)
                     .padding()
-            })
+            }).padding(.top, -200)
             
             // Status
-            Text(isConnected ? "Подключено" : "Отключено")
-                .foregroundColor(isConnected ? .yellow : .gray)
+            Text(vpnService.connection.isConnected ? "Connected" : "Disconnected")
+                .foregroundColor(vpnService.connection.isConnected ? .yellow : .gray)
                 .font(.headline)
                 .padding(.bottom, 4)
             
             // Server
-            if isConnected {
-                Text("Сервер: \(serverName)")
+            if vpnService.connection.isConnected, let server = vpnService.connection.selectedServer {
+                Text("Server: \(server.name)")
                     .foregroundColor(.white)
                     .font(.subheadline)
                     .padding(.bottom, 20)
             }
             
             // Speed
-            if isConnected {
+            if vpnService.connection.isConnected {
                 HStack {
                     Image(systemName: "arrow.down.to.line.alt")
-                    Text(downloadSpeed)
+                    Text(vpnService.formatSpeed(vpnService.connection.downloadSpeed))
                     Spacer()
-                    Text(uploadSpeed)
+                    Text(vpnService.formatSpeed(vpnService.connection.uploadSpeed))
                     Image(systemName: "arrow.up.to.line.alt")
                 }
                 .foregroundColor(.white)
@@ -82,15 +63,13 @@ struct HomeView: View {
                 .padding(.horizontal)
             }
 
-
-            if !isConnected {
-                Menu {
-                    Button("Auto") { selectedMode = "Auto" }
-                    Button("Manual") { selectedMode = "Manual" }
-                } label: {
+            if !vpnService.connection.isConnected {
+                Button(action: {
+                    showingServerList = true
+                }) {
                     HStack {
                         Image(systemName: "shield")
-                        Text(selectedMode)
+                        Text(serverSelectionText)
                         Spacer()
                         Image(systemName: "chevron.down")
                     }
@@ -102,26 +81,31 @@ struct HomeView: View {
                     .shadow(radius: 2)
                 }
                 .padding(.horizontal)
+                .sheet(isPresented: $showingServerList) {
+                    ServerListView(vpnService: vpnService)
+                }
             }
+            
             Spacer()
             
+            // Bottom navigation
             HStack {
                 Spacer()
                 VStack {
-                    Image(systemName: "house")
-                    Text("Главная")
+                    Image(systemName: "house.fill")
+                    Text("Home")
                         .font(.caption)
                 }
                 Spacer()
                 VStack {
                     Image(systemName: "gear")
-                    Text("Настройки")
+                    Text("Settings")
                         .font(.caption)
                 }
                 Spacer()
                 VStack {
                     Image(systemName: "square.and.arrow.up")
-                    Text("Поделиться")
+                    Text("Share")
                         .font(.caption)
                 }
                 Spacer()
@@ -132,6 +116,15 @@ struct HomeView: View {
         }
         .background(Color.appBackground)
         .edgesIgnoringSafeArea(.bottom)
+    }
+    
+    private var serverSelectionText: String {
+        switch vpnService.connection.connectionMode {
+        case .auto:
+            return "Auto"
+        case .manual(let server):
+            return server.name
+        }
     }
 }
 

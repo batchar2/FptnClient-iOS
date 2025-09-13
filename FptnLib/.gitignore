@@ -1,5 +1,8 @@
 build-simulator/
 build-ios-arm64/
-.DS_Store
 CMakeUserPresets.json
-
+.DS_Store
+*.DS_Store
+._*
+.Spotlight-V100
+.Trashes
