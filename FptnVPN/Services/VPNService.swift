@@ -6,10 +6,14 @@ Distributed under the MIT License (https://opensource.org/licenses/MIT)
 
 import Foundation
 import Combine
+import NetworkExtension
 
 class VPNService: ObservableObject {
     @Published var connection = VPNConnection()
     private var timer: Timer?
+    private var speedTimer: Timer?
+    private var websocketClient: WebsocketClientBridge?
+    private var packetTunnelProvider: NETunnelProviderManager?
     
     private let tokenService = TokenService.shared
     
@@ -18,7 +22,6 @@ class VPNService: ObservableObject {
         let server: VPNServer
         switch connection.connectionMode {
         case .auto:
-            // Automatic selection of the best server (simple logic here)
             let servers = tokenService.getServers()
             server = servers.first ?? servers[0]
         case .manual(let selectedServer):
@@ -33,94 +36,301 @@ class VPNService: ObservableObject {
             return
         }
         
-        // Here will be the call to native code for VPN connection
-        // Example using HttpsClientSwift (placeholder)
-        /*
-        let client = HttpsClientSwift(
+        // Perform login and get access token
+        loginToServer(server: server, username: tokenData.username, password: tokenData.password) { [weak self] result in
+            switch result {
+            case .success(let accessToken):
+                // Get DNS information
+                self?.getDNSInfo(server: server, accessToken: accessToken) { dnsResult in
+                    switch dnsResult {
+                    case .success(let (dnsIPv4, dnsIPv6)):
+                        // Configure and start VPN tunnel
+                        self?.configureAndStartVPN(server: server, dnsIPv4: dnsIPv4, dnsIPv6: dnsIPv6) { vpnResult in
+                            switch vpnResult {
+                            case .success:
+                                // Start WebSocket connection
+                                self?.startWebSocketConnection(
+                                    server: server,
+                                    accessToken: accessToken,
+                                    dnsIPv4: dnsIPv4,
+                                    dnsIPv6: dnsIPv6
+                                )
+                            case .failure(let error):
+                                print("VPN configuration error: \(error)")
+                            }
+                        }
+                    case .failure(let error):
+                        print("DNS error: \(error)")
+                    }
+                }
+            case .failure(let error):
+                print("Login error: \(error)")
+            }
+        }
+    }
+    
+    private func loginToServer(server: VPNServer, username: String, password: String, completion: @escaping (Result<String, Error>) -> Void) {
+        let httpsClient = HttpsClientSwift(
             host: server.host,
-            port: Int32(server.port),
+            port: server.port,
             sni: server.host,
             md5Fingerprint: server.md5_fingerprint
         )
         
-        // Perform connection
-        let success = client.connect(
-            username: tokenData.username,
-            password: tokenData.password
+        let requestBody = """
+        {
+            "username": "\(username)",
+            "password": "\(password)"
+        }
+        """
+        
+        let response = httpsClient.post(path: "/api/v1/login", body: requestBody, timeout: 10)
+        
+        guard (response["code"] as? Int32) == 200 else {
+            let errorMessage = response["error"] as? String ?? "Unknown error"
+            completion(.failure(NSError(domain: "VPNService", code: 2, userInfo: [NSLocalizedDescriptionKey: errorMessage])))
+            return
+        }
+        
+        guard let body = response["body"] as? String,
+              let data = body.data(using: .utf8),
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let accessToken = json["access_token"] as? String else {
+            completion(.failure(NSError(domain: "VPNService", code: 1, userInfo: [NSLocalizedDescriptionKey: "Access token not found"])))
+            return
+        }
+        
+        print("Login successful: \(accessToken)")
+        completion(.success(accessToken))
+    }
+    
+    
+    private func getDNSInfo(server: VPNServer, accessToken: String, completion: @escaping (Result<(String, String), Error>) -> Void) {
+        let httpsClient = HttpsClientSwift(
+            host: server.host,
+            port: server.port,
+            sni: server.host,
+            md5Fingerprint: server.md5_fingerprint
         )
-        */
         
-        // Placeholder — assume successful connection
-        let success = true
+        let response = httpsClient.get(path: "/api/v1/dns", timeout: 10)
+        guard (response["code"] as? Int32) == 200 else {
+            let errorMessage = response["error"] as? String ?? "Unknown error"
+            completion(.failure(NSError(domain: "VPNService", code: 4, userInfo: [NSLocalizedDescriptionKey: errorMessage])))
+            return
+        }
+        guard let body = response["body"] as? String,
+              let data = body.data(using: .utf8),
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let dnsIPv4 = json["dns"] as? String else {
+            completion(.failure(NSError(domain: "VPNService", code: 3, userInfo: [NSLocalizedDescriptionKey: "DNS info not found"])))
+            return
+        }
         
-        if success {
-            connection.isConnected = true
-            startTimer()
-            // Start speed monitoring
-            startSpeedMonitoring()
+        let dnsIPv6 = json["dns_ipv6"] as? String ?? "fd00::1"
+        print("DNS IPv4: \(dnsIPv4)  IPv6: \(dnsIPv6)")
+        completion(.success((dnsIPv4, dnsIPv6)))
+    }
+    
+    private func configureAndStartVPN(server: VPNServer, dnsIPv4: String, dnsIPv6: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        NETunnelProviderManager.loadAllFromPreferences { [weak self] managers, error in
+            guard let self = self else { return }
+            
+            print("Start configuring VPN")
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            
+            let tunnelManager = managers?.first ?? NETunnelProviderManager()
+            
+            // Configure protocol - ВАЖНО: исправляем конфигурацию
+            let protocolConfig = NETunnelProviderProtocol()
+            protocolConfig.providerBundleIdentifier = "com.stas.FptnVPN.FptnVPNTunnel" // Должен точно совпадать с Bundle Identifier расширения
+            protocolConfig.serverAddress = server.host
+            
+            // Provider configuration должен содержать только простые типы
+            protocolConfig.providerConfiguration = [
+                "server": server.host,
+                "port": server.port,
+                "dnsIPv4": dnsIPv4,
+                "dnsIPv6": dnsIPv6,
+                "sni": server.host,
+                "md5Fingerprint": server.md5_fingerprint
+            ] as [String: Any]
+            
+            tunnelManager.protocolConfiguration = protocolConfig
+            tunnelManager.localizedDescription = "Fptn VPN"
+            tunnelManager.isEnabled = true
+            
+            guard let config = tunnelManager.protocolConfiguration as? NETunnelProviderProtocol else {
+                completion(.failure(NSError(domain: "VPNService", code: 6, userInfo: [NSLocalizedDescriptionKey: "Invalid protocol configuration"])))
+                return
+            }
+            
+            // Сохраняем настройки
+            tunnelManager.saveToPreferences { error in
+                if let error = error {
+                    print("Save preferences error: \(error)")
+                    completion(.failure(error))
+                    return
+                }
+                
+                print("VPN configuration saved successfully")
+                
+                tunnelManager.loadFromPreferences { error in
+                    if let error = error {
+                        print("Load preferences error: \(error)")
+                        completion(.failure(error))
+                        return
+                    }
+                    
+                    self.packetTunnelProvider = tunnelManager
+                    
+                    do {
+                        try tunnelManager.connection.startVPNTunnel()
+                        print("VPN tunnel started successfully")
+                        completion(.success(()))
+                    } catch {
+                        print("Failed to start VPN tunnel: \(error)")
+                        completion(.failure(error))
+                    }
+                }
+            }
+        }
+    }
+//    private func configureAndStartVPN(server: VPNServer, dnsIPv4: String, dnsIPv6: String, completion: @escaping (Result<Void, Error>) -> Void) {
+//        NETunnelProviderManager.loadAllFromPreferences { [weak self] managers, error in
+//            guard let self = self else { return }
+//            
+//            print("Start configuring VPN")
+//            if let error = error {
+//                completion(.failure(error))
+//                return
+//            }
+//            
+//            let tunnelManager = managers?.first ?? NETunnelProviderManager()
+//            
+//            // Configure protocol
+//            let protocolConfig = NETunnelProviderProtocol()
+//            protocolConfig.providerBundleIdentifier = "com.fptn.FptnVPN.FptnVPNTunnel"
+//            protocolConfig.serverAddress = server.host
+//            protocolConfig.providerConfiguration = [
+//                "server": server.host,
+//                "port": server.port,
+//                "dnsIPv4": dnsIPv4,
+//                "dnsIPv6": dnsIPv6,
+//                "sni": server.host,
+//                "md5Fingerprint": server.md5_fingerprint
+//            ]
+//            
+//            tunnelManager.protocolConfiguration = protocolConfig
+//            tunnelManager.localizedDescription = "Fptn VPN"
+//            tunnelManager.isEnabled = true
+//            
+//            // Save configuration
+//            tunnelManager.saveToPreferences { error in
+//                if let error = error {
+//                    completion(.failure(error))
+//                    return
+//                }
+//                
+//                // Load configuration again to ensure it's proper
+//                tunnelManager.loadFromPreferences { error in
+//                    if let error = error {
+//                        completion(.failure(error))
+//                        return
+//                    }
+//                    
+//                    self.packetTunnelProvider = tunnelManager
+//                    
+//                    // Start VPN connection
+//                    do {
+//                        try tunnelManager.connection.startVPNTunnel()
+//                        completion(.success(()))
+//                    } catch {
+//                        completion(.failure(error))
+//                    }
+//                }
+//            }
+//        }
+//    }
+    
+    private func startWebSocketConnection(server: VPNServer, accessToken: String, dnsIPv4: String, dnsIPv6: String) {
+        websocketClient = WebsocketClientBridge(
+            serverIP: server.host,
+            serverPort: server.port,
+            tunInterfaceIPv4: "10.8.0.2",
+            sni: server.host,
+            accessToken: accessToken,
+            md5Fingerprint: server.md5_fingerprint,
+            packetCallback: { [weak self] packetData in
+                self?.handleIncomingPacket(packetData)
+            },
+            connectedCallback: { [weak self] in
+                self?.onWebSocketConnected()
+            }
+        )
+        
+        if websocketClient?.start() == true {
+            DispatchQueue.main.async {
+                self.connection.isConnected = true
+                self.startTimer()
+                self.startRealSpeedMonitoring()
+            }
         }
     }
     
-    func disconnect() {
-        // Here will be the call to native code for VPN disconnection
-        connection.isConnected = false
-        stopTimer()
-        stopSpeedMonitoring()
+    private func handleIncomingPacket(_ packetData: Data) {
+        // Send packet to VPN tunnel
+        guard let tunnelConnection = packetTunnelProvider?.connection as? NETunnelProviderSession else {
+            return
+        }
+        
+        do {
+            try tunnelConnection.sendProviderMessage(packetData) { response in
+                // Handle response if needed
+            }
+        } catch {
+            print("Failed to send packet to tunnel: \(error)")
+        }
     }
     
+    private func onWebSocketConnected() {
+        print("WebSocket connection established")
+    }
     
-    /*
-     func connect() {
-         let manager = NEVPNManager.shared()
-         
-         manager.loadFromPreferences { error in
-             if let error = error {
-                 print("Error loading VPN preferences: \(error)")
-                 return
-             }
-             
-             let protocolConfig = NETunnelProviderProtocol()
-             protocolConfig.providerBundleIdentifier = "com.stas.FptnVPN.FptnVPNTunnel"
-             protocolConfig.serverAddress = "vpn.example.com" // фиктивный адрес для отображения
-             protocolConfig.username = self.tokenService.getTokenData()?.username
-             
-             manager.protocolConfiguration = protocolConfig
-             manager.localizedDescription = "Fptn VPN"
-             manager.isEnabled = true
-             
-             manager.saveToPreferences { error in
-                 if let error = error {
-                     print("Error saving VPN preferences: \(error)")
-                     return
-                 }
-                 do {
-                     try manager.connection.startVPNTunnel()
-                     DispatchQueue.main.async {
-                         self.connection.isConnected = true
-                     }
-                 } catch {
-                     print("Failed to start VPN Tunnel: \(error)")
-                 }
-             }
-         }
-     }
-     
-     func disconnect() {
-         let manager = NEVPNManager.shared()
-         manager.connection.stopVPNTunnel()
-         DispatchQueue.main.async {
-             self.connection.isConnected = false
-         }
-     }
-     
-     */
+    func disconnect() {
+        // Stop WebSocket
+        websocketClient?.stop()
+        websocketClient = nil
+        
+        // Stop VPN tunnel
+        packetTunnelProvider?.connection.stopVPNTunnel()
+        packetTunnelProvider = nil
+        
+        // Update UI state
+        DispatchQueue.main.async {
+            self.connection.isConnected = false
+            self.stopTimer()
+            self.stopSpeedMonitoring()
+        }
+    }
     
+    func sendPacket(_ packetData: Data) -> Bool {
+        return websocketClient?.sendPacket(packetData) ?? false
+    }
     
-    
-    
-    
-    
-    
+    private func startRealSpeedMonitoring() {
+        speedTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+            guard let self = self, self.connection.isConnected else { return }
+            
+            // Get actual speed from WebSocket client if available
+            // For now, use placeholder
+            self.connection.downloadSpeed = Double.random(in: 5...15)
+            self.connection.uploadSpeed = Double.random(in: 2...8)
+        }
+    }
     
     private func startTimer() {
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
@@ -134,17 +344,9 @@ class VPNService: ObservableObject {
         connection.connectionTime = 0
     }
     
-    private func startSpeedMonitoring() {
-        // Here will be the implementation of speed monitoring
-        // For now, use a placeholder with random values
-        Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
-            guard let self = self, self.connection.isConnected else { return }
-            self.connection.downloadSpeed = Double.random(in: 1...10)
-            self.connection.uploadSpeed = Double.random(in: 1...5)
-        }
-    }
-    
     private func stopSpeedMonitoring() {
+        speedTimer?.invalidate()
+        speedTimer = nil
         connection.downloadSpeed = 0
         connection.uploadSpeed = 0
     }
@@ -158,9 +360,9 @@ class VPNService: ObservableObject {
     
     func formatSpeed(_ speed: Double) -> String {
         if speed < 1000 {
-            return String(format: "%.2f Kbps", speed)
+            return String(format: "%.1f Kbps", speed)
         } else {
-            return String(format: "%.2f Mbps", speed / 1000)
+            return String(format: "%.1f Mbps", speed / 1000)
         }
     }
 }

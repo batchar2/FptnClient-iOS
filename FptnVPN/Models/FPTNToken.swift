@@ -14,10 +14,10 @@ struct FPTNToken: Codable {
     let servers: [VPNServer]
 }
 
-struct VPNServer: Codable, Identifiable {
-    var id: String { name }
-    let name: String
-    let host: String
-    let md5_fingerprint: String
-    let port: Int
-}
+//struct VPNServer: Codable, Identifiable {
+//    var id: String { name }
+//    let name: String
+//    let host: String
+//    let md5_fingerprint: String
+//    let port: Int
+//}
