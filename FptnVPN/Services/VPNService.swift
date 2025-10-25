@@ -133,43 +133,22 @@ class VPNService: ObservableObject {
     }
     
     private func configureAndStartVPN(server: VPNServer, dnsIPv4: String, dnsIPv6: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        
         NETunnelProviderManager.loadAllFromPreferences { [weak self] managers, error in
             guard let self = self else { return }
             
-            print("Start configuring VPN")
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
+            let config = NETunnelProviderProtocol()
+            config.serverAddress = server.host
+#if os(iOS)
+            config.providerBundleIdentifier = "org.fptn.FptnVPN.FptnVPNTunnel"
+#else
+            config.providerBundleIdentifier = "org.fptn.FptnVPN.mac.extension"
+#endif
             
-            let tunnelManager = managers?.first ?? NETunnelProviderManager()
-            
-            // Configure protocol - ВАЖНО: исправляем конфигурацию
-            let protocolConfig = NETunnelProviderProtocol()
-            protocolConfig.providerBundleIdentifier = "com.stas.FptnVPN.FptnVPNTunnel" // Должен точно совпадать с Bundle Identifier расширения
-            protocolConfig.serverAddress = server.host
-            
-            // Provider configuration должен содержать только простые типы
-            protocolConfig.providerConfiguration = [
-                "server": server.host,
-                "port": server.port,
-                "dnsIPv4": dnsIPv4,
-                "dnsIPv6": dnsIPv6,
-                "sni": server.host,
-                "md5Fingerprint": server.md5_fingerprint
-            ] as [String: Any]
-            
-            tunnelManager.protocolConfiguration = protocolConfig
-            tunnelManager.localizedDescription = "Fptn VPN"
-            tunnelManager.isEnabled = true
-            
-            guard let config = tunnelManager.protocolConfiguration as? NETunnelProviderProtocol else {
-                completion(.failure(NSError(domain: "VPNService", code: 6, userInfo: [NSLocalizedDescriptionKey: "Invalid protocol configuration"])))
-                return
-            }
-            
-            // Сохраняем настройки
-            tunnelManager.saveToPreferences { error in
+            let manager = NETunnelProviderManager()
+            manager.protocolConfiguration = config
+            manager.localizedDescription = "FPTN"
+            manager.saveToPreferences(completionHandler: { (error) -> Void in
                 if let error = error {
                     print("Save preferences error: \(error)")
                     completion(.failure(error))
@@ -178,27 +157,82 @@ class VPNService: ObservableObject {
                 
                 print("VPN configuration saved successfully")
                 
-                tunnelManager.loadFromPreferences { error in
-                    if let error = error {
-                        print("Load preferences error: \(error)")
-                        completion(.failure(error))
-                        return
-                    }
-                    
-                    self.packetTunnelProvider = tunnelManager
-                    
-                    do {
-                        try tunnelManager.connection.startVPNTunnel()
-                        print("VPN tunnel started successfully")
-                        completion(.success(()))
-                    } catch {
-                        print("Failed to start VPN tunnel: \(error)")
-                        completion(.failure(error))
-                    }
-                }
-            }
+                if error != nil {
+                    print(error?.localizedDescription as Any)
+                } 
+            })
         }
     }
+    
+//    private func configureAndStartVPN(server: VPNServer, dnsIPv4: String, dnsIPv6: String, completion: @escaping (Result<Void, Error>) -> Void) {
+//        NETunnelProviderManager.loadAllFromPreferences { [weak self] managers, error in
+//            guard let self = self else { return }
+//            
+//            print("Start configuring VPN")
+//            if let error = error {
+//                completion(.failure(error))
+//                return
+//            }
+//            
+//            let tunnelManager = managers?.first ?? NETunnelProviderManager()
+//            
+//            let protocolConfig = NETunnelProviderProtocol()
+//            protocolConfig.providerBundleIdentifier = "org.fptn.FptnVPN.FptnVPNTunnel"
+//            
+//            protocolConfig.serverAddress = server.host
+//            
+//            // Provider configuration должен содержать только простые типы
+//            protocolConfig.providerConfiguration = [
+//                "server": server.host,
+//                "port": server.port,
+//                "dnsIPv4": dnsIPv4,
+//                "dnsIPv6": dnsIPv6,
+//                "sni": server.host,
+//                "md5Fingerprint": server.md5_fingerprint
+//            ] as [String: Any]
+//            
+//            tunnelManager.protocolConfiguration = protocolConfig
+//            tunnelManager.localizedDescription = "Fptn VPN"
+//            tunnelManager.isEnabled = true
+//            
+//            guard let config = tunnelManager.protocolConfiguration as? NETunnelProviderProtocol else {
+//                completion(.failure(NSError(domain: "VPNService", code: 6, userInfo: [NSLocalizedDescriptionKey: "Invalid protocol configuration"])))
+//                return
+//            }
+//            
+//            tunnelManager.saveToPreferences { error in
+//                if let error = error {
+//                    print("Save preferences error: \(error)")
+//                    completion(.failure(error))
+//                    return
+//                }
+//                
+//                print("VPN configuration saved successfully")
+//                
+//                tunnelManager.loadFromPreferences { error in
+//                    if let error = error {
+//                        print("Load preferences error: \(error)")
+//                        completion(.failure(error))
+//                        return
+//                    }
+//                    
+//                    self.packetTunnelProvider = tunnelManager
+//                    
+//                    do {
+//                        try tunnelManager.connection.startVPNTunnel()
+//                        print("VPN tunnel started successfully")
+//                        completion(.success(()))
+//                    } catch {
+//                        print("Failed to start VPN tunnel: \(error)")
+//                        completion(.failure(error))
+//                    }
+//                }
+//            }
+//        }
+//    }
+    
+    
+    
 //    private func configureAndStartVPN(server: VPNServer, dnsIPv4: String, dnsIPv6: String, completion: @escaping (Result<Void, Error>) -> Void) {
 //        NETunnelProviderManager.loadAllFromPreferences { [weak self] managers, error in
 //            guard let self = self else { return }

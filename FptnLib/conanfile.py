@@ -50,6 +50,9 @@ class FptnLib(ConanFile):
         tc.cache_variables["Protobuf_PROTOC_EXECUTABLE"] = protoc_path
         print("Protoc Path: ", protobuf_build, protoc_path)
 
+        # fptn_dep = self.dependencies["fptn"]
+        # tc.variables["fptn_DIR"] = fptn_dep.package_folder
+
         tc.generate()
 
     def build(self):

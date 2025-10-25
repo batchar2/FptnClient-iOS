@@ -16,6 +16,12 @@ struct HomeView: View {
             
             // Connection time
             if vpnService.connection.isConnected {
+//                var name = "111"
+//                name = "1111"
+//                
+//                let a = 1;
+//                a = 5
+//                let colors = [1,2,3, "111"]
                 Text("Connection Time")
                     .foregroundColor(.white)
                 Text(vpnService.formatConnectionTime())

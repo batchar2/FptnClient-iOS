@@ -6,7 +6,20 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		7994B7FD2E7A299E00624B08 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79A890742E7582AB0062CD90 /* NetworkExtension.framework */; };
+		7994B7FE2E7A299E00624B08 /* NetworkExtension.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 79A890742E7582AB0062CD90 /* NetworkExtension.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		79A8907D2E7582AB0062CD90 /* FptnVPNTunnel.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 79A890722E7582AB0062CD90 /* FptnVPNTunnel.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
+		79A8907B2E7582AB0062CD90 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 85D5C31E2DFD4A0600ABAD64 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 79A890712E7582AB0062CD90;
+			remoteInfo = FptnVPNTunnel;
+		};
 		85D5C3342DFD4A0800ABAD64 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 85D5C31E2DFD4A0600ABAD64 /* Project object */;
@@ -34,16 +47,50 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 1;
 		};
+		7994B7FF2E7A299E00624B08 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				7994B7FE2E7A299E00624B08 /* NetworkExtension.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		79A890822E7582AB0062CD90 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				79A8907D2E7582AB0062CD90 /* FptnVPNTunnel.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		79A890722E7582AB0062CD90 /* FptnVPNTunnel.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FptnVPNTunnel.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		79A890742E7582AB0062CD90 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		85D5C3262DFD4A0600ABAD64 /* FptnVPN.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FptnVPN.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		85D5C3332DFD4A0800ABAD64 /* FptnVPNTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FptnVPNTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		85D5C33D2DFD4A0800ABAD64 /* FptnVPNUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FptnVPNUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		79A8907E2E7582AB0062CD90 /* Exceptions for "FptnVPNTunnel" folder in "FptnVPNTunnel" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 79A890712E7582AB0062CD90 /* FptnVPNTunnel */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		79A8902E2E743D580062CD90 /* Exceptions for "FptnVPN" folder in "Embed Frameworks" phase from "FptnVPN" target */ = {
+		79BEF5492E7D0AF7007E57BB /* Exceptions for "FptnVPN" folder in "Embed Frameworks" phase from "FptnVPN" target */ = {
 			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
 			attributesByRelativePath = {
 				Cpp/fptn_native_lib.framework = (CodeSignOnCopy, RemoveHeadersOnCopy, );
@@ -53,7 +100,7 @@
 				Cpp/fptn_native_lib.framework,
 			);
 		};
-		79A890302E74420F0062CD90 /* Exceptions for "FptnVPN" folder in "Copy Bundle Resources" phase from "FptnVPN" target */ = {
+		79D2799F2E7D6BE500B24EDB /* Exceptions for "FptnVPN" folder in "Copy Bundle Resources" phase from "FptnVPN" target */ = {
 			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
 			buildPhase = 85D5C3242DFD4A0600ABAD64 /* Resources */;
 			membershipExceptions = (
@@ -63,11 +110,19 @@
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		79A890762E7582AB0062CD90 /* FptnVPNTunnel */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				79A8907E2E7582AB0062CD90 /* Exceptions for "FptnVPNTunnel" folder in "FptnVPNTunnel" target */,
+			);
+			path = FptnVPNTunnel;
+			sourceTree = "<group>";
+		};
 		85D5C3282DFD4A0600ABAD64 /* FptnVPN */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				79A890302E74420F0062CD90 /* Exceptions for "FptnVPN" folder in "Copy Bundle Resources" phase from "FptnVPN" target */,
-				79A8902E2E743D580062CD90 /* Exceptions for "FptnVPN" folder in "Embed Frameworks" phase from "FptnVPN" target */,
+				79D2799F2E7D6BE500B24EDB /* Exceptions for "FptnVPN" folder in "Copy Bundle Resources" phase from "FptnVPN" target */,
+				79BEF5492E7D0AF7007E57BB /* Exceptions for "FptnVPN" folder in "Embed Frameworks" phase from "FptnVPN" target */,
 			);
 			path = FptnVPN;
 			sourceTree = "<group>";
@@ -85,6 +140,14 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		79A8906F2E7582AB0062CD90 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7994B7FD2E7A299E00624B08 /* NetworkExtension.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		85D5C3232DFD4A0600ABAD64 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -109,12 +172,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		79A890732E7582AB0062CD90 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				79A890742E7582AB0062CD90 /* NetworkExtension.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		85D5C31D2DFD4A0600ABAD64 = {
 			isa = PBXGroup;
 			children = (
 				85D5C3282DFD4A0600ABAD64 /* FptnVPN */,
 				85D5C3362DFD4A0800ABAD64 /* FptnVPNTests */,
 				85D5C3402DFD4A0800ABAD64 /* FptnVPNUITests */,
+				79A890762E7582AB0062CD90 /* FptnVPNTunnel */,
+				79A890732E7582AB0062CD90 /* Frameworks */,
 				85D5C3272DFD4A0600ABAD64 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -125,6 +198,7 @@
 				85D5C3262DFD4A0600ABAD64 /* FptnVPN.app */,
 				85D5C3332DFD4A0800ABAD64 /* FptnVPNTests.xctest */,
 				85D5C33D2DFD4A0800ABAD64 /* FptnVPNUITests.xctest */,
+				79A890722E7582AB0062CD90 /* FptnVPNTunnel.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -132,6 +206,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		79A890712E7582AB0062CD90 /* FptnVPNTunnel */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 79A8907F2E7582AB0062CD90 /* Build configuration list for PBXNativeTarget "FptnVPNTunnel" */;
+			buildPhases = (
+				79A8906E2E7582AB0062CD90 /* Sources */,
+				79A8906F2E7582AB0062CD90 /* Frameworks */,
+				79A890702E7582AB0062CD90 /* Resources */,
+				7994B7FF2E7A299E00624B08 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				79A890762E7582AB0062CD90 /* FptnVPNTunnel */,
+			);
+			name = FptnVPNTunnel;
+			packageProductDependencies = (
+			);
+			productName = FptnVPNTunnel;
+			productReference = 79A890722E7582AB0062CD90 /* FptnVPNTunnel.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		85D5C3252DFD4A0600ABAD64 /* FptnVPN */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 85D5C3472DFD4A0800ABAD64 /* Build configuration list for PBXNativeTarget "FptnVPN" */;
@@ -140,10 +237,12 @@
 				85D5C3232DFD4A0600ABAD64 /* Frameworks */,
 				85D5C3242DFD4A0600ABAD64 /* Resources */,
 				798039E22E74177300BEA18D /* Embed Frameworks */,
+				79A890822E7582AB0062CD90 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				79A8907C2E7582AB0062CD90 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				85D5C3282DFD4A0600ABAD64 /* FptnVPN */,
@@ -211,6 +310,9 @@
 				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1640;
 				TargetAttributes = {
+					79A890712E7582AB0062CD90 = {
+						CreatedOnToolsVersion = 16.4;
+					};
 					85D5C3252DFD4A0600ABAD64 = {
 						CreatedOnToolsVersion = 16.4;
 						LastSwiftMigration = 1640;
@@ -242,11 +344,19 @@
 				85D5C3252DFD4A0600ABAD64 /* FptnVPN */,
 				85D5C3322DFD4A0800ABAD64 /* FptnVPNTests */,
 				85D5C33C2DFD4A0800ABAD64 /* FptnVPNUITests */,
+				79A890712E7582AB0062CD90 /* FptnVPNTunnel */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		79A890702E7582AB0062CD90 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		85D5C3242DFD4A0600ABAD64 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -271,6 +381,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		79A8906E2E7582AB0062CD90 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		85D5C3222DFD4A0600ABAD64 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -295,6 +412,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		79A8907C2E7582AB0062CD90 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 79A890712E7582AB0062CD90 /* FptnVPNTunnel */;
+			targetProxy = 79A8907B2E7582AB0062CD90 /* PBXContainerItemProxy */;
+		};
 		85D5C3352DFD4A0800ABAD64 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 85D5C3252DFD4A0600ABAD64 /* FptnVPN */;
@@ -308,6 +430,62 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		79A890802E7582AB0062CD90 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_ENTITLEMENTS = FptnVPNTunnel/FptnVPNTunnelDebug.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4Z69FVD453;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FptnVPNTunnel/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = FptnVPNTunnel;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.fptn.FptnVPN.FptnVPNTunnel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		79A890812E7582AB0062CD90 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_ENTITLEMENTS = FptnVPNTunnel/FptnVPNTunnel.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4Z69FVD453;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FptnVPNTunnel/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = FptnVPNTunnel;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.fptn.FptnVPN.FptnVPNTunnel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		85D5C3452DFD4A0800ABAD64 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -350,6 +528,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/FptnVPN/Cpp/**",
 					"$(PROJECT_DIR)/FptnVPN/Cpp",
+					"$(PROJECT_DIR)/FptnVPN/Cpp/fptn_native_lib.framework",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -366,7 +545,10 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
-				"LD_RUNPATH_SEARCH_PATHS[arch=*]" = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[arch=*]" = (
+					"@executable_path/Frameworks",
+					"$(PROJECT_DIR)/FptnVPN/Cpp/fptn_native_lib.framework",
+				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -418,6 +600,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/FptnVPN/Cpp/**",
 					"$(PROJECT_DIR)/FptnVPN/Cpp",
+					"$(PROJECT_DIR)/FptnVPN/Cpp/fptn_native_lib.framework",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -428,7 +611,10 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
-				"LD_RUNPATH_SEARCH_PATHS[arch=*]" = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[arch=*]" = (
+					"@executable_path/Frameworks",
+					"$(PROJECT_DIR)/FptnVPN/Cpp/fptn_native_lib.framework",
+				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -443,10 +629,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 4Z69FVD453;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -459,6 +646,7 @@
 					"$(PROJECT_DIR)/FptnVPN/Cpp/fptn_native_lib.framework/Headers",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -466,6 +654,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
+					"@executable_path/Frameworks",
+					"$(PROJECT_DIR)/FptnVPN/Cpp/fptn_native_lib.framework",
 					"@executable_path/Frameworks",
 				);
 				"LD_RUNPATH_SEARCH_PATHS[arch=*]" = "-lfptn-protocol-lib_static";
@@ -485,10 +675,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 4Z69FVD453;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -496,6 +687,7 @@
 					"$(PROJECT_DIR)/FptnVPN/Cpp/fptn_native_lib.framework/Headers",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -586,6 +778,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		79A8907F2E7582AB0062CD90 /* Build configuration list for PBXNativeTarget "FptnVPNTunnel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				79A890802E7582AB0062CD90 /* Debug */,
+				79A890812E7582AB0062CD90 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		85D5C3212DFD4A0600ABAD64 /* Build configuration list for PBXProject "FptnVPN" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

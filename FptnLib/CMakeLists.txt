@@ -12,8 +12,10 @@ set(CMAKE_XCODE_ATTRIBUTE_ENABLE_BITCODE NO)
 option(COPY_SOURCE_FILES "Copy source files to output directory" ON)
 set(SOURCE_COPY_DIR "${CMAKE_CURRENT_BINARY_DIR}/exported_sources" CACHE PATH "Directory to copy source files to")
 
- set(FPTN_IP_ADDRESS_WITHOUT_PCAP ON)
+set(FPTN_IP_ADDRESS_WITHOUT_PCAP ON)
 add_compile_definitions(FPTN_IP_ADDRESS_WITHOUT_PCAP)
+
+# include(${CMAKE_BINARY_DIR}/build/generators/conan_toolchain.cmake)
 
 # Dependencies and compile options
 add_definitions(
